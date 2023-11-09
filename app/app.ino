@@ -11,6 +11,8 @@ const int KEY_A_PIN = 10;
 const int KEY_B_PIN = 11;
 const int KEY_CC_PIN = 12;
 
+const int SHARP_PIN = 3;
+
 const int SPEAKER_PIN = 9;
 
 const int NOTE_C = 261;
@@ -41,6 +43,8 @@ void setup() {
   pinMode(KEY_B_PIN, INPUT_PULLUP);
   pinMode(KEY_CC_PIN, INPUT_PULLUP);
 
+  pinMode(SHARP_PIN, INPUT_PULLUP);
+
   pinMode(SPEAKER_PIN, OUTPUT);
 
   startMozzi();
@@ -56,15 +60,27 @@ void updateControl() {
   bool key_b = !digitalRead(KEY_B_PIN);
   bool key_cc = !digitalRead(KEY_CC_PIN);
 
+  bool sharp = !digitalRead(SHARP_PIN);
+
   if (key_c) {
-    cOscil.setFreq(NOTE_C);
+    if (sharp) {
+      cOscil.setFreq((int)(NOTE_C * 1.059463094359));
+    }
+    else {
+      cOscil.setFreq(NOTE_C);
+    }
   }
   else {
     cOscil.setFreq(0);
   }
 
   if (key_d) {
-    dOscil.setFreq(NOTE_D);
+    if (sharp) {
+      dOscil.setFreq((int)(NOTE_D * 1.059463094359));
+    }
+    else {
+      dOscil.setFreq(NOTE_D);
+    }
   }
   else {
     dOscil.setFreq(0);
@@ -78,21 +94,36 @@ void updateControl() {
   }
 
   if (key_f) {
-    fOscil.setFreq(NOTE_F);
+    if (sharp) {
+      fOscil.setFreq((int)(NOTE_F * 1.059463094359));
+    }
+    else {
+      fOscil.setFreq(NOTE_F);
+    }
   }
   else {
     fOscil.setFreq(0);
   }
 
   if (key_g) {
-    gOscil.setFreq(NOTE_G);
+    if (sharp) {
+      gOscil.setFreq((int)(NOTE_G * 1.059463094359));
+    }
+    else {
+      gOscil.setFreq(NOTE_G);
+    }
   }
   else {
     gOscil.setFreq(0);
   }
 
   if (key_a) {
-    aOscil.setFreq(NOTE_A);
+    if (sharp) {
+      aOscil.setFreq((int)(NOTE_A * 1.059463094359));
+    }
+    else {
+      aOscil.setFreq(NOTE_A);
+    }
   }
   else {
     aOscil.setFreq(0);
@@ -106,7 +137,12 @@ void updateControl() {
   }
 
   if (key_cc) {
-    ccOscil.setFreq(NOTE_CC);
+    if (sharp) {
+      ccOscil.setFreq((int)(NOTE_CC * 1.059463094359));
+    }
+    else {
+      ccOscil.setFreq(NOTE_CC);
+    }
   }
   else {
     ccOscil.setFreq(0);
