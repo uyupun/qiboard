@@ -12,7 +12,9 @@ const int NOTE_C4 = 261;
 const int NOTE_E4 = 329;
 const int NOTE_G4 = 392;
 
-Oscil<SQUARE_NO_ALIAS_2048_NUM_CELLS, AUDIO_RATE> oscil(SQUARE_NO_ALIAS_2048_DATA);
+Oscil<SQUARE_NO_ALIAS_2048_NUM_CELLS, AUDIO_RATE> cOscil(SQUARE_NO_ALIAS_2048_DATA);
+Oscil<SQUARE_NO_ALIAS_2048_NUM_CELLS, AUDIO_RATE> eOscil(SQUARE_NO_ALIAS_2048_DATA);
+Oscil<SQUARE_NO_ALIAS_2048_NUM_CELLS, AUDIO_RATE> gOscil(SQUARE_NO_ALIAS_2048_DATA);
 
 void setup() {
   pinMode(KEY_C4_PIN, INPUT_PULLUP);
@@ -30,21 +32,47 @@ void updateControl() {
   bool key_g4 = !digitalRead(KEY_G4_PIN);
 
   if (key_c4) {
-    oscil.setFreq(NOTE_C4);
-  }
-  else if (key_e4) {
-    oscil.setFreq(NOTE_E4);
-  }
-  else if (key_g4) {
-    oscil.setFreq(NOTE_G4);
+    cOscil.setFreq(NOTE_C4);
   }
   else {
-    oscil.setFreq(0);
+    cOscil.setFreq(0);
+  }
+
+  if (key_e4) {
+    eOscil.setFreq(NOTE_E4);
+  }
+  else {
+    eOscil.setFreq(0);
+  }
+
+  if (key_g4) {
+    gOscil.setFreq(NOTE_G4);
+  }
+  else {
+    gOscil.setFreq(0);
   }
 }
 
 int updateAudio() {
-  return oscil.next();
+  bool key_c4 = !digitalRead(KEY_C4_PIN);
+  bool key_e4 = !digitalRead(KEY_E4_PIN);
+  bool key_g4 = !digitalRead(KEY_G4_PIN);
+
+  int c_sound = 0, e_sound = 0, g_sound = 0;
+
+  if (key_c4) {
+    c_sound = cOscil.next();
+  }
+
+  if (key_e4) {
+    e_sound = eOscil.next();
+  }
+
+  if (key_g4) {
+    g_sound = gOscil.next();
+  }
+  
+  return (c_sound + e_sound + g_sound) / 2;
 }
 
 void loop() {
