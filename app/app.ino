@@ -224,7 +224,7 @@ int updateAudio() {
     cc_sound = ccOscil.next();
   }
 
-  return (c_sound + d_sound + e_sound + f_sound + g_sound + a_sound + b_sound + cc_sound) / 2;
+  return (c_sound + d_sound + e_sound + f_sound + g_sound + a_sound + b_sound + cc_sound) / 3;
 }
 
 void loop() {
