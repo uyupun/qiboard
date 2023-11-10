@@ -2,19 +2,19 @@
 #include <Oscil.h>
 #include <tables/square_no_alias_2048_int8.h>
 
-const int KEY_C_PIN = 4;
-const int KEY_D_PIN = 5;
-const int KEY_E_PIN = 6;
-const int KEY_F_PIN = 7;
-const int KEY_G_PIN = 8;
-const int KEY_A_PIN = 10;
-const int KEY_B_PIN = 11;
-const int KEY_CC_PIN = 12;
+const int KEY_C_PIN = 0;
+const int KEY_D_PIN = 1;
+const int KEY_E_PIN = 2;
+const int KEY_F_PIN = 3;
+const int KEY_G_PIN = 4;
+const int KEY_A_PIN = 5;
+const int KEY_B_PIN = 6;
+const int KEY_CC_PIN = 7;
 
-const int SHARP_PIN = 3;
+const int SHARP_PIN = 2;
 
-const int OCTAVE_UP_PIN = 2;
-const int OCTAVE_DOWN_PIN = 0;
+const int OCTAVE_DOWN_PIN = 3;
+const int OCTAVE_UP_PIN = 4;
 
 const int SPEAKER_PIN = 9;
 
@@ -43,15 +43,6 @@ unsigned long debounce_delay = 1000;
 void setup() {
   Serial.begin(115200);
 
-  pinMode(KEY_C_PIN, INPUT_PULLUP);
-  pinMode(KEY_D_PIN, INPUT_PULLUP);
-  pinMode(KEY_E_PIN, INPUT_PULLUP);
-  pinMode(KEY_F_PIN, INPUT_PULLUP);
-  pinMode(KEY_G_PIN, INPUT_PULLUP);
-  pinMode(KEY_A_PIN, INPUT_PULLUP);
-  pinMode(KEY_B_PIN, INPUT_PULLUP);
-  pinMode(KEY_CC_PIN, INPUT_PULLUP);
-
   pinMode(SHARP_PIN, INPUT_PULLUP);
 
   pinMode(OCTAVE_UP_PIN, INPUT_PULLUP);
@@ -63,14 +54,14 @@ void setup() {
 }
 
 void updateControl() {
-  bool key_c = !digitalRead(KEY_C_PIN);
-  bool key_d = !digitalRead(KEY_D_PIN);
-  bool key_e = !digitalRead(KEY_E_PIN);
-  bool key_f = !digitalRead(KEY_F_PIN);
-  bool key_g = !digitalRead(KEY_G_PIN);
-  bool key_a = !digitalRead(KEY_A_PIN);
-  bool key_b = !digitalRead(KEY_B_PIN);
-  bool key_cc = !digitalRead(KEY_CC_PIN);
+  int key_c = mozziAnalogRead(KEY_C_PIN);
+  int key_d = mozziAnalogRead(KEY_D_PIN);
+  int key_e = mozziAnalogRead(KEY_E_PIN);
+  int key_f = mozziAnalogRead(KEY_F_PIN);
+  int key_g = mozziAnalogRead(KEY_G_PIN);
+  int key_a = mozziAnalogRead(KEY_A_PIN);
+  int key_b = mozziAnalogRead(KEY_B_PIN);
+  int key_cc = mozziAnalogRead(KEY_CC_PIN);
 
   bool sharp = !digitalRead(SHARP_PIN);
 
@@ -95,7 +86,7 @@ void updateControl() {
     }
   }
 
-  if (key_c) {
+  if (key_c > 700) {
     if (sharp) {
       cOscil.setFreq((int)(NOTE_C[current_octave - 3] * 1.059463094359));
     }
@@ -107,7 +98,7 @@ void updateControl() {
     cOscil.setFreq(0);
   }
 
-  if (key_d) {
+  if (key_d > 700) {
     if (sharp) {
       dOscil.setFreq((int)(NOTE_D[current_octave - 3] * 1.059463094359));
     }
@@ -119,14 +110,14 @@ void updateControl() {
     dOscil.setFreq(0);
   }
 
-  if (key_e) {
+  if (key_e > 700) {
     eOscil.setFreq(NOTE_E[current_octave - 3]);
   }
   else {
     eOscil.setFreq(0);
   }
 
-  if (key_f) {
+  if (key_f > 700) {
     if (sharp) {
       fOscil.setFreq((int)(NOTE_F[current_octave - 3] * 1.059463094359));
     }
@@ -138,7 +129,7 @@ void updateControl() {
     fOscil.setFreq(0);
   }
 
-  if (key_g) {
+  if (key_g > 700) {
     if (sharp) {
       gOscil.setFreq((int)(NOTE_G[current_octave - 3] * 1.059463094359));
     }
@@ -150,7 +141,7 @@ void updateControl() {
     gOscil.setFreq(0);
   }
 
-  if (key_a) {
+  if (key_a > 700) {
     if (sharp) {
       aOscil.setFreq((int)(NOTE_A[current_octave - 3] * 1.059463094359));
     }
@@ -162,14 +153,14 @@ void updateControl() {
     aOscil.setFreq(0);
   }
 
-  if (key_b) {
+  if (key_b > 700) {
     bOscil.setFreq(NOTE_B[current_octave - 3]);
   }
   else {
     bOscil.setFreq(0);
   }
 
-  if (key_cc) {
+  if (key_cc > 700) {
     if (sharp) {
       ccOscil.setFreq((int)(NOTE_CC[current_octave - 3] * 1.059463094359));
     }
@@ -183,14 +174,14 @@ void updateControl() {
 }
 
 int updateAudio() {
-  bool key_c = !digitalRead(KEY_C_PIN);
-  bool key_d = !digitalRead(KEY_D_PIN);
-  bool key_e = !digitalRead(KEY_E_PIN);
-  bool key_f = !digitalRead(KEY_F_PIN);
-  bool key_g = !digitalRead(KEY_G_PIN);
-  bool key_a = !digitalRead(KEY_A_PIN);
-  bool key_b = !digitalRead(KEY_B_PIN);
-  bool key_cc = !digitalRead(KEY_CC_PIN);
+  int key_c = mozziAnalogRead(KEY_C_PIN);
+  int key_d = mozziAnalogRead(KEY_D_PIN);
+  int key_e = mozziAnalogRead(KEY_E_PIN);
+  int key_f = mozziAnalogRead(KEY_F_PIN);
+  int key_g = mozziAnalogRead(KEY_G_PIN);
+  int key_a = mozziAnalogRead(KEY_A_PIN);
+  int key_b = mozziAnalogRead(KEY_B_PIN);
+  int key_cc = mozziAnalogRead(KEY_CC_PIN);
 
   int c_sound = 0;
   int d_sound = 0;
@@ -201,35 +192,35 @@ int updateAudio() {
   int b_sound = 0;
   int cc_sound = 0;
 
-  if (key_c) {
+  if (key_c > 700) {
     c_sound = cOscil.next();
   }
 
-  if (key_d) {
+  if (key_d > 700) {
     d_sound = dOscil.next();
   }
 
-  if (key_e) {
+  if (key_e > 700) {
     e_sound = eOscil.next();
   }
   
-  if (key_f) {
+  if (key_f > 700) {
     f_sound = fOscil.next();
   }
 
-  if (key_g) {
+  if (key_g > 700) {
     g_sound = gOscil.next();
   }
 
-  if (key_a) {
+  if (key_a > 700) {
     a_sound = aOscil.next();
   }
 
-  if (key_b) {
+  if (key_b > 700) {
     b_sound = bOscil.next();
   }
 
-  if (key_cc) {
+  if (key_cc > 700) {
     cc_sound = ccOscil.next();
   }
 
