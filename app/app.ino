@@ -36,8 +36,9 @@ Oscil<SQUARE_NO_ALIAS_2048_NUM_CELLS, AUDIO_RATE> aOscil(SQUARE_NO_ALIAS_2048_DA
 Oscil<SQUARE_NO_ALIAS_2048_NUM_CELLS, AUDIO_RATE> bOscil(SQUARE_NO_ALIAS_2048_DATA);
 Oscil<SQUARE_NO_ALIAS_2048_NUM_CELLS, AUDIO_RATE> ccOscil(SQUARE_NO_ALIAS_2048_DATA);
 
-int current_octave = 4;
-unsigned long last_debounce_time = 0;
+unsigned int current_octave = 4;
+unsigned long octave_up_last_debounce_time = 0;
+unsigned long octave_down_last_debounce_time = 0;
 unsigned long debounce_delay = 1000;
 
 void setup() {
@@ -65,6 +66,28 @@ void setFreq(const int note[], Oscil<TABLE_SIZE, UPDATE_RATE>& oscil, int amount
   }
 }
 
+void downOctave(bool is_octave_down) {
+  unsigned long current_time = millis();
+  if ((current_time - octave_down_last_debounce_time) <= debounce_delay) {
+    return;
+  }
+  if (is_octave_down && current_octave > 3) {
+    current_octave--;
+    octave_down_last_debounce_time = current_time;
+  }
+}
+
+void upOctave(bool is_octave_up) {
+  unsigned long current_time = millis();
+  if ((current_time - octave_up_last_debounce_time) <= debounce_delay) {
+    return;
+  }
+  if (is_octave_up && current_octave < 5) {
+    current_octave++;
+    octave_up_last_debounce_time = current_time;
+  }
+}
+
 void updateControl() {
   int c_amount = mozziAnalogRead(KEY_C_PIN);
   int d_amount = mozziAnalogRead(KEY_D_PIN);
@@ -77,27 +100,6 @@ void updateControl() {
 
   bool is_sharp = !digitalRead(SHARP_PIN);
 
-  bool octave_up = !digitalRead(OCTAVE_UP_PIN);
-  bool octave_down = !digitalRead(OCTAVE_DOWN_PIN);
-  unsigned long current_time = millis();
-
-  if ((current_time - last_debounce_time) > debounce_delay) {
-    if (octave_up && current_octave < 5) {
-      Serial.print("UP");
-      Serial.print(current_octave);
-      current_octave++;
-      Serial.print(current_octave);
-      last_debounce_time = current_time;
-    }
-    if (octave_down && current_octave > 3) {
-      Serial.print("DOWN");
-      Serial.print(current_octave);
-      current_octave--;
-      Serial.print(current_octave);
-      last_debounce_time = current_time;
-    }
-  }
-
   setFreq(NOTE_C, cOscil, c_amount, is_sharp);
   setFreq(NOTE_D, dOscil, d_amount, is_sharp);
   setFreq(NOTE_E, eOscil, e_amount);
@@ -106,6 +108,12 @@ void updateControl() {
   setFreq(NOTE_A, aOscil, a_amount, is_sharp);
   setFreq(NOTE_B, bOscil, b_amount);
   setFreq(NOTE_CC, ccOscil, cc_amount, is_sharp);
+
+  bool is_octave_down = !digitalRead(OCTAVE_DOWN_PIN);
+  bool is_octave_up = !digitalRead(OCTAVE_UP_PIN);
+  
+  downOctave(is_octave_down);
+  upOctave(is_octave_up);
 }
 
 int updateAudio() {
