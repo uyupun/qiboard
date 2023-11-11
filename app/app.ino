@@ -53,17 +53,29 @@ void setup() {
   startMozzi();
 }
 
-void updateControl() {
-  int key_c = mozziAnalogRead(KEY_C_PIN);
-  int key_d = mozziAnalogRead(KEY_D_PIN);
-  int key_e = mozziAnalogRead(KEY_E_PIN);
-  int key_f = mozziAnalogRead(KEY_F_PIN);
-  int key_g = mozziAnalogRead(KEY_G_PIN);
-  int key_a = mozziAnalogRead(KEY_A_PIN);
-  int key_b = mozziAnalogRead(KEY_B_PIN);
-  int key_cc = mozziAnalogRead(KEY_CC_PIN);
+template <unsigned int TABLE_SIZE, unsigned int UPDATE_RATE>
+void setFreq(const int note[], Oscil<TABLE_SIZE, UPDATE_RATE>& oscil, int amount, bool is_sharp = false) {
+  if (amount > 700) {
+    if (is_sharp) {
+      oscil.setFreq((int)(note[current_octave - 3] * 1.059463094359));
+    }
+    else {
+      oscil.setFreq(note[current_octave - 3]);
+    }
+  }
+}
 
-  bool sharp = !digitalRead(SHARP_PIN);
+void updateControl() {
+  int c_amount = mozziAnalogRead(KEY_C_PIN);
+  int d_amount = mozziAnalogRead(KEY_D_PIN);
+  int e_amount = mozziAnalogRead(KEY_E_PIN);
+  int f_amount = mozziAnalogRead(KEY_F_PIN);
+  int g_amount = mozziAnalogRead(KEY_G_PIN);
+  int a_amount = mozziAnalogRead(KEY_A_PIN);
+  int b_amount = mozziAnalogRead(KEY_B_PIN);
+  int cc_amount = mozziAnalogRead(KEY_CC_PIN);
+
+  bool is_sharp = !digitalRead(SHARP_PIN);
 
   bool octave_up = !digitalRead(OCTAVE_UP_PIN);
   bool octave_down = !digitalRead(OCTAVE_DOWN_PIN);
@@ -86,91 +98,14 @@ void updateControl() {
     }
   }
 
-  if (key_c > 700) {
-    if (sharp) {
-      cOscil.setFreq((int)(NOTE_C[current_octave - 3] * 1.059463094359));
-    }
-    else {
-      cOscil.setFreq(NOTE_C[current_octave - 3]);
-    }
-  }
-  else {
-    cOscil.setFreq(0);
-  }
-
-  if (key_d > 700) {
-    if (sharp) {
-      dOscil.setFreq((int)(NOTE_D[current_octave - 3] * 1.059463094359));
-    }
-    else {
-      dOscil.setFreq(NOTE_D[current_octave - 3]);
-    }
-  }
-  else {
-    dOscil.setFreq(0);
-  }
-
-  if (key_e > 700) {
-    eOscil.setFreq(NOTE_E[current_octave - 3]);
-  }
-  else {
-    eOscil.setFreq(0);
-  }
-
-  if (key_f > 700) {
-    if (sharp) {
-      fOscil.setFreq((int)(NOTE_F[current_octave - 3] * 1.059463094359));
-    }
-    else {
-      fOscil.setFreq(NOTE_F[current_octave - 3]);
-    }
-  }
-  else {
-    fOscil.setFreq(0);
-  }
-
-  if (key_g > 700) {
-    if (sharp) {
-      gOscil.setFreq((int)(NOTE_G[current_octave - 3] * 1.059463094359));
-    }
-    else {
-      gOscil.setFreq(NOTE_G[current_octave - 3]);
-    }
-  }
-  else {
-    gOscil.setFreq(0);
-  }
-
-  if (key_a > 700) {
-    if (sharp) {
-      aOscil.setFreq((int)(NOTE_A[current_octave - 3] * 1.059463094359));
-    }
-    else {
-      aOscil.setFreq(NOTE_A[current_octave - 3]);
-    }
-  }
-  else {
-    aOscil.setFreq(0);
-  }
-
-  if (key_b > 700) {
-    bOscil.setFreq(NOTE_B[current_octave - 3]);
-  }
-  else {
-    bOscil.setFreq(0);
-  }
-
-  if (key_cc > 700) {
-    if (sharp) {
-      ccOscil.setFreq((int)(NOTE_CC[current_octave - 3] * 1.059463094359));
-    }
-    else {
-      ccOscil.setFreq(NOTE_CC[current_octave - 3]);
-    }
-  }
-  else {
-    ccOscil.setFreq(0);
-  }
+  setFreq(NOTE_C, cOscil, c_amount, is_sharp);
+  setFreq(NOTE_D, dOscil, d_amount, is_sharp);
+  setFreq(NOTE_E, eOscil, e_amount);
+  setFreq(NOTE_F, fOscil, f_amount, is_sharp);
+  setFreq(NOTE_G, gOscil, g_amount, is_sharp);
+  setFreq(NOTE_A, aOscil, a_amount, is_sharp);
+  setFreq(NOTE_B, bOscil, b_amount);
+  setFreq(NOTE_CC, ccOscil, cc_amount, is_sharp);
 }
 
 int updateAudio() {
