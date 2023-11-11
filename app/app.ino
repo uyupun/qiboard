@@ -116,15 +116,23 @@ void updateControl() {
   upOctave(is_octave_up);
 }
 
+template <unsigned int TABLE_SIZE, unsigned int UPDATE_RATE>
+int makeSound(Oscil<TABLE_SIZE, UPDATE_RATE>& oscil, int amount) {
+  if (amount > 700) {
+    return oscil.next();
+  }
+  return 0;
+}
+
 int updateAudio() {
-  int key_c = mozziAnalogRead(KEY_C_PIN);
-  int key_d = mozziAnalogRead(KEY_D_PIN);
-  int key_e = mozziAnalogRead(KEY_E_PIN);
-  int key_f = mozziAnalogRead(KEY_F_PIN);
-  int key_g = mozziAnalogRead(KEY_G_PIN);
-  int key_a = mozziAnalogRead(KEY_A_PIN);
-  int key_b = mozziAnalogRead(KEY_B_PIN);
-  int key_cc = mozziAnalogRead(KEY_CC_PIN);
+  int c_amount = mozziAnalogRead(KEY_C_PIN);
+  int d_amount = mozziAnalogRead(KEY_D_PIN);
+  int e_amount = mozziAnalogRead(KEY_E_PIN);
+  int f_amount = mozziAnalogRead(KEY_F_PIN);
+  int g_amount = mozziAnalogRead(KEY_G_PIN);
+  int a_amount = mozziAnalogRead(KEY_A_PIN);
+  int b_amount = mozziAnalogRead(KEY_B_PIN);
+  int cc_amount = mozziAnalogRead(KEY_CC_PIN);
 
   int c_sound = 0;
   int d_sound = 0;
@@ -135,37 +143,14 @@ int updateAudio() {
   int b_sound = 0;
   int cc_sound = 0;
 
-  if (key_c > 700) {
-    c_sound = cOscil.next();
-  }
-
-  if (key_d > 700) {
-    d_sound = dOscil.next();
-  }
-
-  if (key_e > 700) {
-    e_sound = eOscil.next();
-  }
-  
-  if (key_f > 700) {
-    f_sound = fOscil.next();
-  }
-
-  if (key_g > 700) {
-    g_sound = gOscil.next();
-  }
-
-  if (key_a > 700) {
-    a_sound = aOscil.next();
-  }
-
-  if (key_b > 700) {
-    b_sound = bOscil.next();
-  }
-
-  if (key_cc > 700) {
-    cc_sound = ccOscil.next();
-  }
+  c_sound = makeSound(cOscil, c_amount);
+  d_sound = makeSound(dOscil, d_amount);
+  e_sound = makeSound(eOscil, e_amount);
+  f_sound = makeSound(fOscil, f_amount);
+  g_sound = makeSound(gOscil, g_amount);
+  a_sound = makeSound(aOscil, a_amount);
+  b_sound = makeSound(bOscil, b_amount);
+  cc_sound = makeSound(ccOscil, cc_amount);
 
   return (c_sound + d_sound + e_sound + f_sound + g_sound + a_sound + b_sound + cc_sound) / 3;
 }
